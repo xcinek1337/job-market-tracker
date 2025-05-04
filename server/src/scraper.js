@@ -1,16 +1,18 @@
 require('dotenv').config()
 const puppeteer = require('puppeteer-core');
 const chromium = require('chrome-aws-lambda');
+const config = require('../puppeteer.config.cjs');  // Zaimportuj plik konfiguracyjny
 const { createClient } = require('@supabase/supabase-js');
 
 const scrapeOfferCounts = async () => {
 	console.log(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 	const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 	try {
-		const browser = await puppeteer.launch({
-			args: [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox'],
-			executablePath: await chromium.executablePath,
-			headless: chromium.headless,
+		const browser = await chromium.launch({
+			headless: true,
+			executablePath: process.env.CHROME_BIN,  // Upewnij się, że masz odpowiednią ścieżkę do Chromium
+			args: ['--no-sandbox', '--disable-setuid-sandbox'],
+			userDataDir: config.cacheDirectory,  // Użyj cacheDirectory z pliku konfiguracyjnego
 		  });
 		const page = await browser.newPage();
 
