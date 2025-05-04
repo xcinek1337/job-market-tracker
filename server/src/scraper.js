@@ -1,19 +1,12 @@
 // require('dotenv').config()
-const puppeteer = require('puppeteer-core');
-const chromium = require('chrome-aws-lambda');
-const config = require('../puppeteer.config.cjs');  // Zaimportuj plik konfiguracyjny
+const puppeteer = require('puppeteer');
 const { createClient } = require('@supabase/supabase-js');
 
 const scrapeOfferCounts = async () => {
 	console.log(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 	const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 	try {
-		const browser = await chromium.launch({
-			headless: true,
-			executablePath: process.env.CHROME_BIN,  // Upewnij się, że masz odpowiednią ścieżkę do Chromium
-			args: ['--no-sandbox', '--disable-setuid-sandbox'],
-			userDataDir: config.cacheDirectory,  // Użyj cacheDirectory z pliku konfiguracyjnego
-		  });
+		const browser = await puppeteer.launch({ headless: true });
 		const page = await browser.newPage();
 
 		await page.setUserAgent(
@@ -44,9 +37,9 @@ const scrapeOfferCounts = async () => {
 		const match = totalCountText.match(/\d+/);
 		number = match ? parseInt(match[0]) : null;
 		await browser.close();
+
+		const { error } = await supabase.from('offers').insert({ count_offers: number });
 		console.log(number);
-		
-		// const { error } = await supabase.from('offers').insert({ count_offers: number });
 	} catch (err) {
 		console.error('Error:', err);
 	} finally {
