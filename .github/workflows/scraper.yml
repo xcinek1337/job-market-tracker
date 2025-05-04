@@ -1,29 +1,29 @@
-name: Run Scraper Daily
+name: Scrape Offers
 
 on:
   schedule:
-    - cron: '0 2 * * *'  
-  workflow_dispatch:  
+    - cron: '0 0 * * *' # Codziennie o północy
+  workflow_dispatch: # Ręczne uruchomienie workflow
 
 jobs:
-  scraper:
+  scrape:
     runs-on: ubuntu-latest
 
     steps:
-     
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-     
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '14' 
+          node-version: '16'
 
-      
       - name: Install dependencies
         run: npm install
 
-    
       - name: Run scraper
-        run: node src/scraper.js 
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          CHROME_BIN: ${{ secrets.CHROME_BIN }}
+        run: node src/scraper.js
