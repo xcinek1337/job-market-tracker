@@ -19,15 +19,15 @@ jobs:
           node-version: '16'
 
       - name: Install dependencies
-        run: 
-         cd server 
-         npm install
+        run: |
+          cd server
+          npm install
 
       - name: Run scraper
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           CHROME_BIN: ${{ secrets.CHROME_BIN }}
-        run: 
-         cd server
-         node src/scraper.js
+        run: |
+          cd server
+          node src/scraper.js
