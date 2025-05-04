@@ -1,4 +1,4 @@
-require('dotenv').config()
+// require('dotenv').config()
 const puppeteer = require('puppeteer-core');
 const chromium = require('chrome-aws-lambda');
 const config = require('../puppeteer.config.cjs');  // Zaimportuj plik konfiguracyjny
