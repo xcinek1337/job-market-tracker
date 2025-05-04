@@ -1,12 +1,17 @@
 require('dotenv').config()
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
+const chromium = require('chrome-aws-lambda');
 const { createClient } = require('@supabase/supabase-js');
 
 const scrapeOfferCounts = async () => {
 	console.log(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 	const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 	try {
-		const browser = await puppeteer.launch({ headless: true });
+		const browser = await puppeteer.launch({
+			args: [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox'],
+			executablePath: await chromium.executablePath,
+			headless: chromium.headless,
+		  });
 		const page = await browser.newPage();
 
 		await page.setUserAgent(
