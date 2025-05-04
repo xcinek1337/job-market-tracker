@@ -37,8 +37,9 @@ const scrapeOfferCounts = async () => {
 		const match = totalCountText.match(/\d+/);
 		number = match ? parseInt(match[0]) : null;
 		await browser.close();
-
-		const { error } = await supabase.from('offers').insert({ count_offers: number });
+		console.log(number);
+		
+		// const { error } = await supabase.from('offers').insert({ count_offers: number });
 	} catch (err) {
 		console.error('Error:', err);
 	} finally {
